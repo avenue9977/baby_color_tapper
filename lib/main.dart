@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:random_color/random_color.dart';
+import 'package:flare_flutter/flare_actor.dart';
 
 void main() => runApp(MyApp());
 
@@ -9,7 +10,6 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Flutter Demo',
       home: MyHomePage(),
     );
   }
@@ -21,9 +21,18 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-  static RandomColor _randomColor = RandomColor();
+  static RandomColor _colorGenerator = RandomColor();
 
   Color _color = Colors.yellow;
+  String _animationName = '';
+
+  void _animationCallback(String name) {
+      if (name == 'go') {
+        setState(() {
+          _animationName = 'idle';
+        });
+      }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -32,14 +41,23 @@ class _MyHomePageState extends State<MyHomePage> {
       body: GestureDetector(
         onTap: () {
           setState(() {
-            _color = _randomColor.randomColor(
+            _color = _colorGenerator.randomColor(
                 colorSaturation: ColorSaturation.highSaturation,
                 colorBrightness: ColorBrightness.dark
               );
+
+            _animationName = 'go';
           });
         },
         child: Container(
           color: _color,
+          child: FlareActor(
+            'animations/tada2.flr',
+            alignment: Alignment.center,
+            fit: BoxFit.contain,
+            animation: _animationName,
+            callback: _animationCallback,
+            ),
         ),
       ),
       bottomNavigationBar: BottomAppBar(
